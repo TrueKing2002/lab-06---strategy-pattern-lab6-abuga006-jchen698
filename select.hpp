@@ -2,7 +2,6 @@
 #define __SELECT_HPP__
 
 #include <cstring>
-#include <iostream>
 
 class Select
 {
@@ -49,7 +48,6 @@ public:
     Select_Contains(const Spreadsheet* sheet, const std::string& name, const std::string& str)
     {
 	column = sheet->get_column_by_name(name);
-        if(column == -1) std::cout << "ERROR: INVALID COLUMN NAME" << std::endl;
 	this->str = str;
     }
 
