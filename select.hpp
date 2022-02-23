@@ -2,6 +2,7 @@
 #define __SELECT_HPP__
 
 #include <cstring>
+#include <iostream>
 
 class Select
 {
@@ -29,6 +30,8 @@ public:
         column = sheet->get_column_by_name(name);
     }
 
+    Select_Column() {}
+
     virtual bool select(const Spreadsheet* sheet, int row) const
     {
         return select(sheet->cell_data(row, column));
@@ -38,4 +41,92 @@ public:
     virtual bool select(const std::string& s) const = 0;
 };
 
+class Select_Contains: public Select_Column
+{
+private:
+    std::string str;
+public:
+    Select_Contains(const Spreadsheet* sheet, const std::string& name, const std::string& str)
+    {
+	column = sheet->get_column_by_name(name);
+        if(column == -1) std::cout << "ERROR: INVALID COLUMN NAME" << std::endl;
+	this->str = str;
+    }
+
+    virtual bool select(const std::string& s) const
+    {
+	if(s.find(str, 0) != std::string::npos)
+	    return true;
+	return false;
+    }
+};
+
+class Select_Not: public Select
+{
+private:
+    Select* selection;
+public:
+    Select_Not(Select* selection)
+    {
+	this->selection = selection;	
+    }
+
+    ~Select_Not() 
+    {
+	delete selection;
+    }
+
+    virtual bool select(const Spreadsheet* sheet, int row) const
+    {
+	return !selection->select(sheet, row);
+    }
+};
+
+class Select_And: public Select
+{
+private:
+    Select* left;
+    Select* right;
+public:
+    Select_And(Select* left, Select* right)
+    {
+	this->left = left;
+	this->right = right;
+    }
+	
+    ~Select_And()
+    {
+	delete left;
+	delete right;
+    }
+ 
+    virtual bool select(const Spreadsheet* sheet, int row) const
+    {
+        return left->select(sheet, row) && right->select(sheet, row);
+    }
+};
+
+class Select_Or: public Select
+{
+private:
+    Select* left;
+    Select* right;
+public:
+    Select_Or(Select* left, Select* right)
+    {
+        this->left = left;
+        this->right = right;
+    }
+
+    ~Select_Or()
+    {
+	delete left;
+	delete right;
+    }
+
+    virtual bool select(const Spreadsheet* sheet, int row) const
+    {
+        return left->select(sheet, row) || right->select(sheet, row);
+    }
+};
 #endif //__SELECT_HPP__
