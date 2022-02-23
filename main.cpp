@@ -1,4 +1,4 @@
-#include "spreadsheet.cpp"
+#include "spreadsheet.hpp"
 #include "select.hpp"
 
 #include <iostream>
