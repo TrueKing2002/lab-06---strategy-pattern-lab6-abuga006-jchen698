@@ -57,5 +57,6 @@ int Spreadsheet::get_column_by_name(const std::string& name) const
     for(int i=0; i<column_names.size(); i++)
         if(column_names.at(i) == name)
             return i;
+    std::cout << "ERROR: INVALID COLUMN NAME" << std::endl;
     return -1;
 }
