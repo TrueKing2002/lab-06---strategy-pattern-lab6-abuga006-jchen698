@@ -225,6 +225,93 @@ TEST(Or, None) {
 	EXPECT_EQ(out.str(), "");
 }
 
+TEST(mainExample, test1) {
+    std::stringstream out;
+    Spreadsheet sheet;
+    sheet.set_column_names({"First","Last","Age","Major"});
+    sheet.add_row({"Amanda","Andrews","22","business"});
+    sheet.add_row({"Brian","Becker","21","computer science"});
+    sheet.add_row({"Carol","Conners","21","computer science"});
+    sheet.add_row({"Joe","Jackson","21","mathematics"});
+    sheet.add_row({"Sarah","Summers","21","computer science"});
+    sheet.add_row({"Diane","Dole","20","computer engineering"});
+    sheet.add_row({"David","Dole","22","electrical engineering"});
+    sheet.add_row({"Dominick","Dole","22","communications"});
+    sheet.add_row({"George","Genius","9","astrophysics"});
+
+    sheet.print_selection(out);
+    EXPECT_EQ(out.str(), "Amanda Andrews 22 business \nBrian Becker 21 computer science \nCarol Conners 21 computer science \nJoe Jackson 21 mathematics \nSarah Summers 21 computer science \nDiane Dole 20 computer engineering \nDavid Dole 22 electrical engineering \nDominick Dole 22 communications \nGeorge Genius 9 astrophysics \n");
+}
+
+TEST(mainExample, test2) {
+    std::stringstream out;
+    Spreadsheet sheet;
+    sheet.set_column_names({"First","Last","Age","Major"});
+    sheet.add_row({"Amanda","Andrews","22","business"});
+    sheet.add_row({"Brian","Becker","21","computer science"});
+    sheet.add_row({"Carol","Conners","21","computer science"});
+    sheet.add_row({"Joe","Jackson","21","mathematics"});
+    sheet.add_row({"Sarah","Summers","21","computer science"});
+    sheet.add_row({"Diane","Dole","20","computer engineering"});
+    sheet.add_row({"David","Dole","22","electrical engineering"});
+    sheet.add_row({"Dominick","Dole","22","communications"});
+    sheet.add_row({"George","Genius","9","astrophysics"});
+
+    sheet.set_selection(new Select_Contains(&sheet, "Last", "Dole"));
+
+    sheet.print_selection(out);
+    EXPECT_EQ(out.str(), "Diane Dole 20 computer engineering \nDavid Dole 22 electrical engineering \nDominick Dole 22 communications \n");
+}
+
+TEST(mainExample, test3) {
+    std::stringstream out;
+    Spreadsheet sheet;
+    sheet.set_column_names({"First","Last","Age","Major"});
+    sheet.add_row({"Amanda","Andrews","22","business"});
+    sheet.add_row({"Brian","Becker","21","computer science"});
+    sheet.add_row({"Carol","Conners","21","computer science"});
+    sheet.add_row({"Joe","Jackson","21","mathematics"});
+    sheet.add_row({"Sarah","Summers","21","computer science"});
+    sheet.add_row({"Diane","Dole","20","computer engineering"});
+    sheet.add_row({"David","Dole","22","electrical engineering"});
+    sheet.add_row({"Dominick","Dole","22","communications"});
+    sheet.add_row({"George","Genius","9","astrophysics"});
+
+    sheet.set_selection(
+	new Select_And(
+	    new Select_Contains(&sheet, "Last", "Dole"),
+	    new Select_Not(
+		new Select_Contains(&sheet, "First", "v"))));
+
+    sheet.print_selection(out);
+    EXPECT_EQ(out.str(), "Diane Dole 20 computer engineering \nDominick Dole 22 communications \n");
+}
+
+TEST(mainExample, test4) {
+    std::stringstream out;
+    Spreadsheet sheet;
+    sheet.set_column_names({"First","Last","Age","Major"});
+    sheet.add_row({"Amanda","Andrews","22","business"});
+    sheet.add_row({"Brian","Becker","21","computer science"});
+    sheet.add_row({"Carol","Conners","21","computer science"});
+    sheet.add_row({"Joe","Jackson","21","mathematics"});
+    sheet.add_row({"Sarah","Summers","21","computer science"});
+    sheet.add_row({"Diane","Dole","20","computer engineering"});
+    sheet.add_row({"David","Dole","22","electrical engineering"});
+    sheet.add_row({"Dominick","Dole","22","communications"});
+    sheet.add_row({"George","Genius","9","astrophysics"});
+
+    sheet.set_selection(
+	new Select_Or(
+	    new Select_Contains(&sheet, "First", "Amanda"),
+	    new Select_Or(
+		new Select_Contains(&sheet, "Last", "on"),
+		new Select_Contains(&sheet, "Age", "9"))));
+
+    sheet.print_selection(out);
+    EXPECT_EQ(out.str(), "Amanda Andrews 22 business \nCarol Conners 21 computer science \nJoe Jackson 21 mathematics \nGeorge Genius 9 astrophysics \n");
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
