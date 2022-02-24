@@ -29,8 +29,6 @@ public:
         column = sheet->get_column_by_name(name);
     }
 
-    Select_Column() {}
-
     virtual bool select(const Spreadsheet* sheet, int row) const
     {
         return select(sheet->cell_data(row, column));
@@ -45,9 +43,8 @@ class Select_Contains: public Select_Column
 private:
     std::string str;
 public:
-    Select_Contains(const Spreadsheet* sheet, const std::string& name, const std::string& str)
+    Select_Contains(const Spreadsheet* sheet, const std::string& name, const std::string& str) : Select_Column(sheet, name)
     {
-	column = sheet->get_column_by_name(name);
 	this->str = str;
     }
 
